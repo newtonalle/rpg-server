@@ -1,0 +1,28 @@
+{
+  "name": "rpg-server",
+  "version": "1.0.0",
+  "description": "RPG Server",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newtonalle/rpg-server.git"
+  },
+  "author": "Newton Alle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/newtonalle/rpg-server/issues"
+  },
+  "homepage": "https://github.com/newtonalle/rpg-server#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "joi": "^17.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
