@@ -1,37 +1,50 @@
-const Joi = require('joi')
+const { DataTypes, Model } = require('sequelize')
+const { sequelize } = require('../db')
 
-module.exports = {
-    Player: Joi.object({
-        name: Joi.string()
-            .required()
-            .min(3)
-            .max(30),
+class Player extends Model { }
+Player.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
 
-        email: Joi.string()
-            .email()
-            .lowercase()
-            .required(),
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 
-        password: Joi.string()
-            .min(6)
-            .required(),
+    class: {
+        type: DataTypes.ENUM("mage", "warrior", "archer"),
+        allowNull: false
+    },
 
-        class: Joi.string()
-            .valid("mage", "warrior", "archer")
-            .required(),
+    attributeStrength: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
 
-        attributes: Joi.object({
+    attributeDexterity: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
 
-            strength: Joi.number()
-                .required(),
+    attributeIntelligence: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, {
+    sequelize,
+    scopes: {
+        withoutPassword: {
+            attributes: { exclude: ['password'] },
+        }
+    }
+})
 
-            dexterity: Joi.number()
-                .required(),
-
-            intelligence: Joi.number()
-                .required()
-
-        }).required()
-    })
-}
+module.exports = { Player }

@@ -1,6 +1,7 @@
-const postgres = require('postgres')
+const { Sequelize } = require('sequelize')
 
-const pool = postgres({
+const sequelize = new Sequelize({
+    dialect: 'postgres',
     host: 'localhost',
     port: 5432,
     database: 'postgres',
@@ -14,4 +15,4 @@ const pool = postgres({
 //   2 - usar conexao
 //   3 - devolver conexao pra pool
 
-module.exports = { pool }
+module.exports = { sequelize }

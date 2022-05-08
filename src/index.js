@@ -5,6 +5,7 @@ const app = express()
 const { authenticated } = require('./middlewares/auth')
 const { validate } = require('./middlewares/validators')
 const { validatePlayer } = require('./validators/playerValidator')
+const { syncAll } = require('./models')
 
 /*
 Tipos de requisição HTTP
@@ -21,7 +22,7 @@ e a função da rota ser executada (por isso é no meio, middleware).
 */
 
 // Middleware pré-pronto do express que processa requisições com o conteudo (body) JSON
-
+syncAll()
 app.use(express.json())
 
 app.get('/players/', playersRoutes.list)

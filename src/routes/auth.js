@@ -1,4 +1,4 @@
-const { Login } = require('../models/auth')
+const { Login } = require('../validations/auth')
 const { findPlayerByEmail } = require('../repository/players')
 const { generatePasswordHash, generateLoginToken } = require('../helpers/auth')
 
@@ -12,7 +12,7 @@ module.exports = {
             })
         }
 
-        const player = (await findPlayerByEmail(login.email))[0]
+        const player = await findPlayerByEmail(login.email)
 
         if (player && player.password === generatePasswordHash(login.password)) {
             res.status(200).json({

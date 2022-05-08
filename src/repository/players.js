@@ -1,80 +1,28 @@
-const { pool } = require('../db')
+const { Player } = require('../models/player')
 
 module.exports = {
     findPlayerById: async (id) => {
-
-        const player = (await pool`
-        SELECT *
-        FROM players where id = ${id}
-        `)[0]
-
-        if (!player) {
-            return null
-        } else {
-            return {
-                name: player.name,
-                class: player.class,
-                email: player.email,
-                attributes: player.attributes,
-                id: player.id
-            }
-        }
+        const player = await Player.scope('withoutPassword').findOne({ where: { id } })
+        return player
     },
     insertPlayer: async (player) => {
-        const [newPlayer] = await pool`
-            INSERT INTO players  ${pool(
-            player,
-            'name',
-            'email',
-            'password',
-            'class'
-        )} returning *
-        `
-        delete newPlayer.password
+        const newPlayer = await Player.scope('withoutPassword').create(player)
         return newPlayer
     },
     listPlayers: async () => {
-        const playersList = (await pool`
-        SELECT *
-        FROM players
-        `)
-
-        return playersList.map(player => ({
-            name: player.name,
-            email: player.email,
-            class: player.class,
-            id: player.id,
-        })
-        )
+        const players = await Player.scope('withoutPassword').findAll()
+        return players
     },
     deletePlayerById: async (id) => {
-        const deletedIds = await pool`DELETE FROM players where id = ${id} RETURNING id`
-
-        if (deletedIds.length > 0) {
-            return true
-        }
-        else {
-            return false
-        }
+        const count = await Player.destroy({ where: { id } })
+        return count > 0
     },
     editPlayerById: async (id, bodyPlayer) => {
-        const updatedIds = await pool`
-        UPDATE players SET name = ${bodyPlayer.name}, class = ${bodyPlayer.class} where id = ${id} returning id
-        `
-
-        if (updatedIds.length > 0) {
-
-            return true
-        } else {
-            return false
-        }
+        const [count] = await Player.update(bodyPlayer, { where: { id }, returning: true })
+        return count > 0
     },
     findPlayerByEmail: async (email) => {
-        const player = (await pool`
-        SELECT *
-        FROM players where email = ${email}
-        `)
-
+        const player = await Player.findOne({ where: { email } })
         return player
     }
 }
