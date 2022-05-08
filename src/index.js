@@ -1,6 +1,10 @@
 const express = require('express')
 const playersRoutes = require('./routes/players')
+const authRoutes = require('./routes/auth')
 const app = express()
+const { authenticated } = require('./middlewares/auth')
+const { validate } = require('./middlewares/validators')
+const { validatePlayer } = require('./validators/playerValidator')
 
 /*
 Tipos de requisição HTTP
@@ -16,16 +20,19 @@ Middlewares são funções que são executadas entre o servidor receber a requis
 e a função da rota ser executada (por isso é no meio, middleware).
 */
 
-app.use((req, res) => {
-    console.log('Estou no middleware')
-    return req.next()
-})
-
 // Middleware pré-pronto do express que processa requisições com o conteudo (body) JSON
+
 app.use(express.json())
 
 app.get('/players/', playersRoutes.list)
-app.post('/players/', playersRoutes.create)
+app.post('/auth/login', authRoutes.login)
+app.get('/me', authenticated, playersRoutes.me)
 app.get('/players/:id', playersRoutes.get)
+app.delete('/players/:id', playersRoutes.delete)
+app.post('/players/', validate(validatePlayer), playersRoutes.create)
+app.put('/players/:id', authenticated, playersRoutes.put)
+
+
+
 
 app.listen(3000)
