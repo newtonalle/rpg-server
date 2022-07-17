@@ -103,6 +103,38 @@ docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432
  * ✓ Delete
  * ✓ Put **Attributes a ser feito** **Verificação de NULL a ser feita**
  * ✓ Me
+## 2022-05-08
+* Criar sistema de inventory:
+    * Tabela PlayerItems com as colunas (id player, id item)
+    * Tabela Items com as colunas (id item, name, strength, dexterity, intelligence, requiredStrengh, requiredDexterity, requiredIntelligence)
+
+    -------> Criar lógica para verificar o que o player tem, passar
+    a lógica para o get inventory e/ou me de tal player, retornando uma array com cada um dos items (seus nomes e id ou todas as suas informações) + Validators? + Tirar referência que não faz sentido: ../theSameFile/otherFile.js e Alterar fonte dos models de /player para /items
+
+## 2022-05-28
+* ✓ Criar PUT para equipar item 
+    * ✓ Deve checar required attributes 
+    * ✓ Deve checar slot
+    * ✓ Se ja tiver outro item equipado (no slot), troca
+* ✓ Criar um PUT para desequipar item 
+    * ✓ Checar se os outros items pode continuar equipados ou não
+* ✓ Criar atributos virtuais no player de totalStrength, total... 
+    * ✓ Soma o attribute com os attribute dos itens equipados
+
+    --> Criei uma função só para o equip e unequip, se for necessário é possível as
+    dividir em 2.
+
+    * Melhorar os returns de false para o tipo de erro ?
+
+## 2022-06-12
+
+* ✓ Mudar verificação de requisitos e etc para routes
+
+* ✓ Arrumar desequipação
+
+* ✓ Corrigir verificação de ID existente
+
+
 
 Declaração/criação de tabela (bairro):
 

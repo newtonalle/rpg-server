@@ -2,7 +2,7 @@ const { Player } = require('../models/player')
 
 module.exports = {
     findPlayerById: async (id) => {
-        const player = await Player.scope('withoutPassword').findOne({ where: { id } })
+        const player = await Player.scope('withoutPassword').findOne({ where: { id }, include: ['items'] })
         return player
     },
     insertPlayer: async (player) => {

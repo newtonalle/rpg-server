@@ -1,5 +1,6 @@
 const express = require('express')
 const playersRoutes = require('./routes/players')
+const itemsRoutes = require('./routes/items')
 const authRoutes = require('./routes/auth')
 const app = express()
 const { authenticated } = require('./middlewares/auth')
@@ -32,7 +33,10 @@ app.get('/players/:id', playersRoutes.get)
 app.delete('/players/:id', playersRoutes.delete)
 app.post('/players/', validate(validatePlayer), playersRoutes.create)
 app.put('/players/:id', authenticated, playersRoutes.put)
-
+app.put('/players/inventory/:id', playersRoutes.toggleItem)
+app.get('/items/:id', itemsRoutes.getItem)
+app.put('/players/:playerId/inventory/:itemId', itemsRoutes.addItemToPlayerInventory)
+app.get('/players/:id/inventory', playersRoutes.listInventory)
 
 
 

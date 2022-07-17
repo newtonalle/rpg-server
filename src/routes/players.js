@@ -1,4 +1,9 @@
+const { Item } = require('../models/player')
+const { Player } = require('../models/player')
 
+const {
+    toggleItemById
+} = require('../repository/items')
 
 const {
     findPlayerById,
@@ -38,15 +43,18 @@ module.exports = {
     },
 
     get: async (req, res) => {
-        const player = await findPlayerById(Number(req.params.id))
-
-        if (player) {
-            res.send(player)
-        }
-        else {
-            res.status(404).send({
-                message: 'No player available using that ID',
-            })
+        try {
+            const player = await findPlayerById(Number(req.params.id))
+            if (player) {
+                res.send(player)
+            }
+            else {
+                res.status(404).send({
+                    message: 'No player available using that ID',
+                })
+            }
+        } catch (e) {
+            res.status(500).send({ message: e })
         }
     },
 
@@ -79,6 +87,45 @@ module.exports = {
             res.status(404).send({
                 message: 'No player available using that ID',
             })
+        }
+    },
+
+    listInventory: async (req, res) => {
+        const player = await findPlayerById(req.params.id)
+        res.send({ data: player.inventory })
+    },
+
+    toggleItem: async (req, res) => {
+        const id = (Number(req.params.id))
+        const item = await Item.findOne({ where: { id } })
+
+        if (item === null) {
+            res.status(404).send({
+                message: 'No item found using that ID',
+            })
+        } else {
+
+            const player = await Player.scope('withoutPassword').findOne({ where: { id: item.playerId }, include: ['items'] })
+
+            if (!item.equipped) {
+
+                // On Equip
+
+                if (player.totalStrength >= item.requiredStrength && player.totalDexterity >= item.requiredDexterity && player.totalIntelligence >= item.requiredIntelligence) {
+                    await toggleItemById(id)
+                    res.send({ message: 'Item equipped status toggled' })
+                } else {
+                    res.status(400).send({
+                        message: 'Total attribute insulficient',
+                    })
+                }
+            } else {
+
+                // On Unequip
+
+                await toggleItemById(id)
+                res.send({ message: 'Item equipped status toggled' })
+            }
         }
     }
 }
