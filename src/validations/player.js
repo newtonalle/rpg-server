@@ -21,6 +21,9 @@ module.exports = {
             .valid("mage", "warrior", "archer")
             .required(),
 
+        experience: Joi.number()
+            .required(),
+
         attributeStrength: Joi.number()
             .required(),
 
@@ -28,6 +31,18 @@ module.exports = {
             .required(),
 
         attributeIntelligence: Joi.number()
-            .required()
+            .required(),
+
+        maxHealth: Joi.number()
+            .required(),
+
+        currentHealth: Joi.number()
+            .required(),
+
+        maxMana: Joi.number()
+            .required(),
+
+        currentMana: Joi.number()
+            .required(),
     })
 }

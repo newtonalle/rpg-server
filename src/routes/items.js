@@ -1,14 +1,8 @@
 const {
-    insertItem,
     findItemById,
     setItemPlayerId,
 } = require('../repository/items')
 module.exports = {
-    createItem: async (req, res) => {
-        const newItem = await insertItem(req.body)
-        res.status(201).send({ message: 'Item created', data: newItem })
-    },
-
     getItem: async (req, res) => {
         const item = await findItemById(Number(req.params.id))
 

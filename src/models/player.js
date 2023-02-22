@@ -1,5 +1,12 @@
 const { DataTypes, Model } = require('sequelize')
 const { sequelize } = require('../db')
+const BASE_EXPERIENCE = 100
+const EXPERIENCE_GROWTH_RATE = 1.5
+const CLASS_MAIN_DAMAGE = {
+    mage: 'totalIntelligence',
+    warrior: 'totalStrength',
+    archer: 'totalDexterity',
+}
 
 
 class Item extends Model { }
@@ -76,6 +83,11 @@ Player.init({
         allowNull: false
     },
 
+    experience: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
     attributeStrength: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -87,6 +99,26 @@ Player.init({
     },
 
     attributeIntelligence: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    maxHealth: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    currentHealth: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    maxMana: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    currentMana: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -118,6 +150,30 @@ Player.init({
         }
     },
 
+    totalDamage: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this[CLASS_MAIN_DAMAGE[this.class]]
+        }
+    },
+
+    level: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            // Formula:
+
+            // Considering BASE_EXPERIENCE as 100 & EXPERIENCE_GROWTH_RATE as 1.5
+
+            // 100 * (1.5^n - 1.5) = EXP
+            // log(1.5^n) = log(EXP / 100 + 1.5)
+            // n * log(1.5) = log(EXP / 100 + 1.5)
+
+            // n = log(EXP / 100 + 1.5) / log(1.5)
+
+            return Math.floor(Math.log(this.experience / BASE_EXPERIENCE + EXPERIENCE_GROWTH_RATE) / Math.log(EXPERIENCE_GROWTH_RATE))
+        }
+    },
+
     inventory: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -141,9 +197,6 @@ Player.init({
         }
     }
 })
-
-
-
 
 Item.belongsTo(Player, { as: 'player', foreignKey: 'playerId' });
 Player.hasMany(Item, {

@@ -1,9 +1,7 @@
 const { Item } = require('../models/player')
 const { Player } = require('../models/player')
 
-const {
-    toggleItemById
-} = require('../repository/items')
+const { generatePasswordHash } = require('../helpers/auth')
 
 const {
     findPlayerById,
@@ -12,8 +10,10 @@ const {
     deletePlayerById,
     editPlayerById
 } = require('../repository/players')
-const { generatePasswordHash } = require('../helpers/auth')
-const players = require('../repository/players')
+
+const {
+    toggleItemById
+} = require('../repository/items')
 module.exports = {
     // Req é a requisição HTTP recebida
     // Res é a response HTTP que vai ser enviada para o cliente
@@ -34,7 +34,7 @@ module.exports = {
         try {
             const newPlayer = await insertPlayer(req.body)
             res.status(201).send({ message: 'Player created', data: newPlayer })
-        } catch {
+        } catch (e) {
             res.status(422).json({
                 message: 'Email taken',
             })
@@ -127,5 +127,10 @@ module.exports = {
                 res.send({ message: 'Item equipped status toggled' })
             }
         }
-    }
+    },
+
+    listBattles: async (req, res) => {
+        const player = await Player.findOne({ where: { id: req.params.id }, include: ['battles'] })
+        res.send({ data: player.battles })
+    },
 }
