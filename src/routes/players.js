@@ -1,5 +1,6 @@
 const { Item } = require('../models/player')
 const { Player } = require('../models/player')
+const { SpellLevelPlayer } = require('../models/spellLevelPlayer')
 
 const { generatePasswordHash } = require('../helpers/auth')
 
@@ -14,6 +15,10 @@ const {
 const {
     toggleItemById
 } = require('../repository/items')
+
+const {
+    editSpellLevelPlayerById
+} = require('../repository/spells')
 module.exports = {
     // Req é a requisição HTTP recebida
     // Res é a response HTTP que vai ser enviada para o cliente
@@ -54,6 +59,7 @@ module.exports = {
                 })
             }
         } catch (e) {
+            console.log(e)
             res.status(500).send({ message: e })
         }
     },
@@ -116,7 +122,7 @@ module.exports = {
                     res.send({ message: 'Item equipped status toggled' })
                 } else {
                     res.status(400).send({
-                        message: 'Total attribute insulficient',
+                        message: 'Item requirements not met',
                     })
                 }
             } else {
@@ -126,6 +132,22 @@ module.exports = {
                 await toggleItemById(id)
                 res.send({ message: 'Item equipped status toggled' })
             }
+        }
+    },
+
+    toggleSpell: async (req, res) => {
+        const id = (Number(req.params.id))
+        const spellLevelPlayer = await SpellLevelPlayer.findOne({ where: { id } })
+
+        if (spellLevelPlayer === null) {
+            res.status(404).send({
+                message: 'No "spellLevelPlayer" found using that ID',
+            })
+        } else {
+            // const player = await Player.scope('withoutPassword').findOne({ where: { id: spellLevelPlayer.playerId }, include: ['spellLevelPlayers'] })
+
+            await editSpellLevelPlayerById({ equipped: !spellLevelPlayer.equipped }, id)
+            res.send({ message: '"spellLevelPlayer" equipped status toggled' })
         }
     },
 

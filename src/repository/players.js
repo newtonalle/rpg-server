@@ -1,8 +1,10 @@
 const { Player } = require('../models/player')
+const { SpellLevelPlayer } = require('../models/spellLevelPlayer')
+const { SpellLevel } = require('../models/spellLevel')
 
 module.exports = {
     findPlayerById: async (id) => {
-        const player = await Player.scope('withoutPassword').findOne({ where: { id }, include: ['items'] })
+        const player = await Player.scope('withoutPassword').findOne({ where: { id }, include: ['items', { model: SpellLevelPlayer, as: "spellLevelPlayers", include: [{ model: SpellLevel, as: "spellLevel", include: ['spell'] }] }] })
         return player
     },
     insertPlayer: async (player) => {

@@ -118,6 +118,12 @@ Player.init({
         allowNull: false
     },
 
+    unallocatedSpellLevels: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+    },
+
     currentMana: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -126,6 +132,7 @@ Player.init({
     totalStrength: {
         type: DataTypes.VIRTUAL,
         get() {
+            console.log(this.equipments)
             if (!this.equipments) return this.attributeStrength
             const playerStrength = this.attributeStrength + this.equipments.reduce((strength, item) => strength + item.itemStrength, 0)
             return playerStrength

@@ -1,6 +1,7 @@
 const { DataTypes, Model } = require('sequelize')
 const { sequelize } = require('../db')
 const { Battle } = require('./battle')
+const { PreBattle } = require('./preBattle')
 
 class Monster extends Model { }
 Monster.init({
@@ -67,6 +68,12 @@ Monster.init({
 Monster.belongsTo(Battle, { as: 'battle', foreignKey: 'battleId' });
 Battle.hasOne(Monster, {
     foreignKey: 'battleId',
+    as: 'monster'
+});
+
+Monster.belongsTo(PreBattle, { as: 'preBattle', foreignKey: 'preBattleId' });
+PreBattle.hasMany(Monster, {
+    foreignKey: 'preBattleId',
     as: 'monster'
 });
 

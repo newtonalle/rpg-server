@@ -1,10 +1,12 @@
 const { Monster } = require('../models/monster')
+const { PreBattle } = require('../models/preBattle')
 const DEFAULT_MONSTER_NAMES = ['Revirlo', 'Fresckins', 'Alapart', 'Portyu', 'Refgik', 'Kerfto']
 const DEFAULT_MONSTER_TYPES = ['Skeleton', 'Zombie', 'Ghost', 'Spider', 'Verm', 'Rat']
 const DEFAULT_MONSTER_ATTRIBUTE_VARIETY = 5
 const {
     insertMonsters,
     assignMonsterToBattle,
+    assignMonstersToPreBattle,
     listMonsters,
 } = require('../repository/monsters')
 const {
@@ -26,11 +28,11 @@ module.exports = {
 
                 intelligence: player.level + Math.round(Math.random() * DEFAULT_MONSTER_ATTRIBUTE_VARIETY),
 
-                maxHealth: (10 * Math.round(Math.random() * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * player.level,
+                maxHealth: (10 * Math.round((Math.random() + 1) * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * player.level,
 
                 currentHealth: 0,
 
-                maxMana: (10 * Math.round(Math.random() * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * player.level,
+                maxMana: (10 * Math.round((Math.random() + 1) * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * player.level,
 
                 currentMana: 0,
 

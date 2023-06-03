@@ -1,4 +1,5 @@
 const { Battle } = require('../models/battle')
+const { PreBattle } = require('../models/preBattle')
 const { Round } = require('../models/round')
 const { Player } = require('../models/player')
 const { Monster } = require('../models/monster')
@@ -15,12 +16,12 @@ module.exports = {
     },
 
     findCurrentBattleByPlayer: async (player) => {
-        const battle = await Battle.scope('withoutPlayerId').findOne({ where: { playerId: player.id, finished: false }, include: [{ model: Player.scope('withoutPassword'), as: 'player' }, { model: Monster, as: 'monster' }, { model: Round, as: 'rounds' }] })
+        const battle = await Battle.scope('withoutPlayerId').findOne({ where: { playerId: player.id, finished: false }, include: [{ model: Player.scope('withoutPassword'), as: 'player', include: ['items'] }, { model: Monster, as: 'monster' }, { model: Round, as: 'rounds' }] })
         return battle
     },
 
     findFullBattleById: async (id) => {
-        const battle = await Battle.findOne({ where: { id }, include: [{ model: Player.scope('withoutPassword'), as: 'player' }, { model: Monster, as: 'monster' }, { model: Round, as: 'rounds' }] })
+        const battle = await Battle.findOne({ where: { id }, include: [{ model: Player.scope('withoutPassword'), as: 'player', include: ['items'] }, { model: Monster, as: 'monster' }, { model: Round, as: 'rounds' }] })
         return battle
     },
 
