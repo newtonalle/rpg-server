@@ -9,7 +9,7 @@ module.exports = {
 
     toggleItemById: async (id) => {
         const item = await Item.findOne({ where: { id } })
-        let player = await Player.scope('withoutPassword').findOne({ where: { id: item.playerId }, include: ['items'] })
+        let player = await Player.findOne({ where: { id: item.playerId }, include: ['items'] })
 
         await Item.update({ equipped: false }, { where: { playerId: item.playerId, slot: item.slot }, returning: true })
         await Item.update({ equipped: !item.equipped }, { where: { id }, returning: true })
@@ -17,7 +17,7 @@ module.exports = {
 
         // Removal of now invalid items
 
-        player = await Player.scope('withoutPassword').findOne({ where: { id: item.playerId }, include: ['items'] })
+        player = await Player.findOne({ where: { id: item.playerId }, include: ['items'] })
 
         let unequipedIds = []
 
@@ -30,7 +30,7 @@ module.exports = {
             }
 
             await Item.update({ equipped: false }, { where: { id: unequipedIds }, returning: true })
-            player = await Player.scope('withoutPassword').findOne({ where: { id: item.playerId }, include: ['items'] })
+            player = await Player.findOne({ where: { id: item.playerId }, include: ['items'] })
 
         } while (unequipedIds.length > 0)
 

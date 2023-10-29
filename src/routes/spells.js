@@ -86,13 +86,13 @@ module.exports = {
         const spellLevelPlayer = await findSpellLevelPlayerById(Number(req.params.spellLevelPlayerId))
 
         if (!player) {
-            res.status(404).send({ message: 'No player found using this ID', data: spellLevelPlayer })
+            res.status(404).send({ message: 'No player found using this ID', data: player })
         }
 
         if (!spellLevelPlayer) {
             res.status(404).send({ message: 'No "spellLevelPlayer" found using this ID', data: spellLevelPlayer })
         }
-        // Dúvida I
+        // Dúvida I       
         if (player.unallocatedSpellLevels > 0) {
             console.log("Leveled up")
             // Base para os level ups
@@ -110,6 +110,44 @@ module.exports = {
             console.log("Failed to level up")
             res.status(400).send({ message: 'Spell leveling requirements not met', data: spellLevelPlayer })
         }
+    },
+
+    learnSpell: async (req, res) => {
+        console.log(Number(req.params.playerId))
+        const player = await findPlayerById(Number(req.params.playerId))
+        const spell = await findSpellById(Number(req.params.spellId))
+
+        if (!player) {
+            res.status(404).send({ message: 'No player found using this ID', data: player })
+        }
+
+        if (!spell) {
+            res.status(404).send({ message: 'No "spell" found using this ID', data: spell })
+        }
+        if (player.unallocatedSpellLevels > 0) {
+            const baseStartingSpell = {
+                spellId: spell.id,
+                level: 1,
+                manaCost: 10,
+                damage: 10
+            }
+
+            const spellLevel = await insertSpellLevel(baseStartingSpell)
+
+            const spellLevelPlayer = await insertSpellLevelPlayer({
+                isEquipped: true,
+                spellLevelId: spellLevel.id,
+                playerId: player.id
+            })
+
+            await editPlayerById(player.id, { unallocatedSpellLevels: (player.unallocatedSpellLevels - 1) })
+
+            res.status(201).send({ message: 'Spell learned', data: { spellLevel, spellLevelPlayer } })
+        } else {
+            console.log("Failed to learn spell")
+            res.status(400).send({ message: 'Spell learning requirements not met', data: { spell, player } })
+        }
+
     },
 
     // ------ Debug -------

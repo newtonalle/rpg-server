@@ -55,6 +55,11 @@ Monster.init({
         allowNull: false
     },
 
+    gold: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
     totalDamage: {
         type: DataTypes.VIRTUAL,
         get() {

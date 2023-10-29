@@ -19,9 +19,10 @@ module.exports = {
         const user = req.body
         user.password = generatePasswordHash(user.password)
         try {
-            const newUser = await insertUser(req.body)
-            res.status(201).send({ message: 'User created', data: newPlayer })
+            const newUser = await insertUser(user)
+            res.status(201).send({ message: 'User created', data: newUser })
         } catch (e) {
+            console.log(e)
             res.status(422).json({
                 message: 'Email taken',
             })

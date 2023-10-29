@@ -1,3 +1,4 @@
+const { User } = require("../models/user")
 const { Item, Player } = require("../models/player")
 const { Monster } = require("../models/monster")
 const { Battle } = require("../models/battle")
@@ -6,9 +7,13 @@ const { Round } = require("../models/round")
 const { Spell } = require("../models/spell")
 const { SpellLevel } = require("../models/spellLevel")
 const { SpellLevelPlayer } = require("../models/spellLevelPlayer")
+const { Class } = require("../models/class")
+
 
 const syncAll = async () => {
     try {
+        await User.sync()
+        await Class.sync()
         await Player.sync()
         await Battle.sync()
         await PreBattle.sync()

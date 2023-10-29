@@ -1,5 +1,5 @@
 const { Login } = require('../validations/auth')
-const { findPlayerByEmail } = require('../repository/players')
+const { findUserByEmail } = require('../repository/users')
 const { generatePasswordHash, generateLoginToken } = require('../helpers/auth')
 
 module.exports = {
@@ -12,12 +12,12 @@ module.exports = {
             })
         }
 
-        const player = await findPlayerByEmail(login.email)
+        const user = await findUserByEmail(login.email)
 
-        if (player && player.password === generatePasswordHash(login.password)) {
+        if (user && user.password === generatePasswordHash(login.password)) {
             res.status(200).json({
                 message: 'Login succesful',
-                token: generateLoginToken(player)
+                token: generateLoginToken(user)
             })
         } else {
             res.status(401).json({
@@ -26,3 +26,4 @@ module.exports = {
         }
     }
 }
+

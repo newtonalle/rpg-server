@@ -85,6 +85,7 @@ const handleAttack = async (actionProps, isPlayerRound, battle) => {
 
     if (isFinalRound && playerWon) {
         playerUpdate.experience = battle.player.experience + battle.monster.experience
+        playerUpdate.gold = battle.player.gold + battle.monster.gold
 
         battleUpdate.experienceGained = battle.monster.experience
         battleUpdate.finished = true
@@ -106,7 +107,7 @@ const handleAttack = async (actionProps, isPlayerRound, battle) => {
 
     const updatedPlayer = await Player.findOne({ where: { id: battle.player.id } })
     if (updatedPlayer.level > battle.player.level) {
-        await Player.update({ unallocatedSpellLevels: battle.player.unallocatedSpellLevels + 1 }, { where: { id: battle.player.id }, returning: true, raw: true })
+        await Player.update({ unallocatedSpellLevels: battle.player.unallocatedSpellLevels + 1, unallocatedAttributePoints: battle.player.unallocatedAttributePoints + 5 }, { where: { id: battle.player.id }, returning: true, raw: true })
     }
 
     return createdRound
@@ -208,6 +209,7 @@ const handleSpell = async (actionProps, isPlayerRound, battle) => {
 
     if (isFinalRound && playerWon) {
         playerUpdate.experience = battle.player.experience + battle.monster.experience
+        playerUpdate.gold = battle.player.gold + battle.monster.gold
 
         battleUpdate.experienceGained = battle.monster.experience
         battleUpdate.finished = true
@@ -221,15 +223,16 @@ const handleSpell = async (actionProps, isPlayerRound, battle) => {
 
     const createdRound = await Round.create(round)
 
-    const updatedPlayer = await Player.update(playerUpdate, { where: { id: battle.player.id }, returning: true, raw: true })
+
+    await Player.update(playerUpdate, { where: { id: battle.player.id }, returning: true, raw: true })
     await Monster.update(monsterUpdate, { where: { id: battle.monster.id }, returning: true, raw: true })
     if (Object.keys(battleUpdate).length) {
         await Battle.update(battleUpdate, { where: { id: battle.id }, returning: true })
     }
 
+    const updatedPlayer = await Player.findOne({ where: { id: battle.player.id } })
     if (updatedPlayer.level > battle.player.level) {
-        console.log("----------------------------------------------------------- Updated lEVEL")
-        await Player.update({ unallocatedSpellLevels: battle.player.unallocatedSpellLevels + 1 }, { where: { id: battle.player.id }, returning: true, raw: true })
+        await Player.update({ unallocatedSpellLevels: battle.player.unallocatedSpellLevels + 1, unallocatedAttributePoints: battle.player.unallocatedAttributePoints + 5 }, { where: { id: battle.player.id }, returning: true, raw: true })
     }
 
     return createdRound

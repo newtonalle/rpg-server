@@ -2,11 +2,6 @@ const { DataTypes, Model } = require('sequelize')
 const { sequelize } = require('../db')
 const BASE_EXPERIENCE = 100
 const EXPERIENCE_GROWTH_RATE = 1.5
-const CLASS_MAIN_DAMAGE = {
-    mage: 'totalIntelligence',
-    warrior: 'totalStrength',
-    archer: 'totalDexterity',
-}
 
 
 class Item extends Model { }
@@ -67,23 +62,12 @@ Player.init({
         allowNull: false
     },
 
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
-
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    class: {
-        type: DataTypes.ENUM("mage", "warrior", "archer"),
-        allowNull: false
-    },
-
     experience: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    gold: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -124,43 +108,71 @@ Player.init({
         allowNull: false
     },
 
+    unallocatedAttributePoints: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+    },
+
     currentMana: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
 
-    totalStrength: {
+    extraDexterity: {
         type: DataTypes.VIRTUAL,
         get() {
-            console.log(this.equipments)
-            if (!this.equipments) return this.attributeStrength
-            const playerStrength = this.attributeStrength + this.equipments.reduce((strength, item) => strength + item.itemStrength, 0)
-            return playerStrength
+            if (!this.equipments) return 0
+            return this.equipments.reduce((dexterity, item) => dexterity + item.itemDexterity, 0)
+        }
+    },
+
+    extraIntelligence: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            if (!this.equipments) return 0
+            return this.equipments.reduce((intelligence, item) => intelligence + item.itemIntelligence, 0)
+        }
+    },
+
+    extraStrength: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            if (!this.equipments) return 0
+            return this.equipments.reduce((strength, item) => strength + item.itemStrength, 0)
         }
     },
 
     totalDexterity: {
         type: DataTypes.VIRTUAL,
         get() {
-            if (!this.equipments) return this.attributeDexterity
-            const playerDexterity = this.attributeDexterity + this.equipments.reduce((dexterity, item) => dexterity + item.itemDexterity, 0)
-            return playerDexterity
+            return this.attributeDexterity + this.extraDexterity
         }
     },
 
     totalIntelligence: {
         type: DataTypes.VIRTUAL,
         get() {
-            if (!this.equipments) return this.attributeIntelligence
-            const playerIntelligence = this.attributeIntelligence + this.equipments.reduce((intelligence, item) => intelligence + item.itemIntelligence, 0)
-            return playerIntelligence
+            return this.attributeIntelligence + this.extraIntelligence
+        }
+    },
+    totalStrength: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.attributeStrength + this.extraStrength
         }
     },
 
     totalDamage: {
         type: DataTypes.VIRTUAL,
         get() {
-            return this[CLASS_MAIN_DAMAGE[this.class]]
+            const attributeValues = {
+                STRENGTH: this.totalStrength,
+                DEXTERITY: this.totalDexterity,
+                INTELLIGENCE: this.totalIntelligence
+            }
+            if (!this.class) return 0
+            return attributeValues[this.class.mainDamageAttribute]
         }
     },
 
@@ -199,8 +211,8 @@ Player.init({
 }, {
     sequelize,
     scopes: {
-        withoutPassword: {
-            attributes: { exclude: ['password'] },
+        fullPlayer: {
+            include: ['class', 'items']
         }
     }
 })

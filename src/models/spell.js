@@ -8,11 +8,6 @@ Spell.init({
         allowNull: false
     },
 
-    class: {
-        type: DataTypes.ENUM("mage", "warrior", "archer"),
-        allowNull: false
-    },
-
     levelAvailability: {
         type: DataTypes.INTEGER,
         allowNull: false

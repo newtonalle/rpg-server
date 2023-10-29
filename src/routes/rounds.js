@@ -6,7 +6,7 @@ const {
     listRounds,
 } = require('../repository/rounds')
 
-const ROUNDS_PER_TURN_AMOUNT = 2 // Must be odd, otherwise the player will not be able to play (Recomended 2)
+const ROUNDS_PER_TURN_AMOUNT = 2 // Must be even, otherwise the player will not be able to play (Recomended 2)
 
 module.exports = {
     create: async (req, res) => {

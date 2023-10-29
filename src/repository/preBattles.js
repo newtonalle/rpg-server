@@ -20,7 +20,7 @@ module.exports = {
     },
 
     findCurrentPreBattleByPlayer: async (playerId) => {
-        const preBattle = await PreBattle.scope('withoutPlayerId').findOne({ where: { playerId, finished: false }, include: [{ model: Player.scope('withoutPassword'), as: 'player' }, { model: Monster, as: 'monster' }] })
+        const preBattle = await PreBattle.scope('withoutPlayerId').findOne({ where: { playerId, finished: false }, include: [{ model: Player, as: 'player' }, { model: Monster, as: 'monster' }] })
         return preBattle
     },
 }

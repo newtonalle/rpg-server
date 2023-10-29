@@ -1,5 +1,7 @@
 const express = require('express')
+const usersRoutes = require('./routes/users')
 const playersRoutes = require('./routes/players')
+const classesRoutes = require('./routes/classes')
 const itemsRoutes = require('./routes/items')
 const spellsRoutes = require('./routes/spells')
 const battlesRoutes = require('./routes/battles')
@@ -11,6 +13,7 @@ const app = express()
 const { authenticated } = require('./middlewares/auth')
 const { validate } = require('./middlewares/validators')
 const { validatePlayer } = require('./validators/playerValidator')
+const { validateUser } = require('./validators/userValidator')
 const { syncAll } = require('./models')
 
 /*
@@ -39,40 +42,46 @@ app.use(express.json())
 app.post('/auth/login', authRoutes.login)
 
 // User Routes
-/*
-app.post('/user/', validate(validatePlayer), userRoutes.create)
-app.delete('/user/:id', userRoutes.delete)
-app.get('/user/:id', userRoutes.get)
-app.put('/user/:id', authenticated, userRoutes.put)
-app.get('/user/', userRoutes.list)
-app.get('/me', authenticated, userRoutes.me)
-*/
+
+app.post('/users/', validate(validateUser), usersRoutes.create)
+app.delete('/users/:id', usersRoutes.delete)
+app.get('/users/:id', usersRoutes.get)
+app.put('/users/:id', authenticated, usersRoutes.put)
+app.get('/me', authenticated, usersRoutes.me)
+
 // Player Routes
 
-app.post('/players/', validate(validatePlayer), playersRoutes.create)
-app.delete('/players/:id', playersRoutes.delete)
-app.get('/players/:id', playersRoutes.get)
-app.put('/players/:id', authenticated, playersRoutes.put)
-app.get('/players/', playersRoutes.list)
-app.get('/me', authenticated, playersRoutes.me)
+app.post('/users/:userId/players/classes/:classId', validate(validatePlayer), authenticated, playersRoutes.create)
+app.get('/users/select-player/:id', authenticated, playersRoutes.selectPlayer)
+app.delete('/users/players/:id', playersRoutes.delete)
+app.get('/users/players/:id', playersRoutes.get)
+app.put('/users/players/:id', authenticated, playersRoutes.put)
+app.get('/users/:userId/players/', playersRoutes.list)
+app.get('/current-player', authenticated, playersRoutes.me)
+app.put('/users/players/:playerId/attributeUp', authenticated, playersRoutes.addAtributtePoints)
+
+// Class Routes
+
+app.get('/classes/:id', classesRoutes.get)
+app.get('/classes/', classesRoutes.list)
 
 // Player-Inventory Routes
 
-app.put('/players/:playerId/inventory/:itemId', itemsRoutes.addItemToPlayerInventory)
-app.put('/players/:playerId/spells/:spellLevelPlayerId', spellsRoutes.addSpellToPlayer)
-app.put('/players/inventory/:id', playersRoutes.toggleItem)
-app.put('/players/spells/:id', playersRoutes.toggleSpell)
+app.put('/users/players/:playerId/inventory/:itemId', itemsRoutes.addItemToPlayerInventory)
+app.put('/users/players/:playerId/spells/:spellLevelPlayerId', spellsRoutes.addSpellToPlayer)
+app.put('/users/players/inventory/:id', playersRoutes.toggleItem)
+app.put('/users/players/spells/:id', playersRoutes.toggleSpell)
 
-app.get('/players/:id/inventory', playersRoutes.listInventory)
+app.get('/users/players/:id/inventory', playersRoutes.listInventory)
 
 // Player-Battle Routes
 
-app.get('/players/:id/battles', playersRoutes.listBattles)
+app.get('/battle-history', authenticated, playersRoutes.battleHistory)
 app.get('/current-battle', authenticated, battlesRoutes.getCurrentBattle)
 
 // Player/Pre-Battle Routes
 
-app.get('/pre-battles/player', authenticated, preBattlesRoutes.getCurrentPreBattle)
+app.get('/pre-battles/users/player', authenticated, preBattlesRoutes.getCurrentPreBattle)
 
 // Item Routes
 
@@ -92,7 +101,8 @@ app.get('/spells/level/player/', spellsRoutes.listSpellLevelPlayers)
 app.get('/spells/level/', spellsRoutes.listSpellLevels)
 app.get('/spells/', spellsRoutes.listSpells)
 
-app.post('/players/:playerId/spells/:spellLevelPlayerId', spellsRoutes.levelUpSpell)
+app.post('/players/:playerId/spells/:spellLevelPlayerId/levelup', spellsRoutes.levelUpSpell)
+app.post('/players/:playerId/spells/:spellId/learn', spellsRoutes.learnSpell)
 
 // Battle-Monster-Round Routes
 

@@ -7,12 +7,11 @@ const DEFAULT_MONSTER_ATTRIBUTE_VARIETY = 5
 
 module.exports = {
     insertMonsters: async (monsters) => {
-        console.log(monsters)
         const newMonster = await Monster.bulkCreate(monsters)
         return newMonster
     },
 
-    createMonstersForBattle: async (player) => {
+    createMonstersForBattle: async (player) => { // Unused --------------------------
 
         const monsters = []
         for (let loop = 0; loop < 3; loop++) {
@@ -35,7 +34,9 @@ module.exports = {
 
                 currentMana: 0,
 
-                experience: 50 * 1
+                experience: 50 * 1,
+
+                gold: (10 * Math.round(Math.random() * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * 1
             }
 
             monster.currentHealth = monster.maxHealth
@@ -44,7 +45,6 @@ module.exports = {
             monsters.push(monster)
 
         }
-        console.log(player.level)
 
         const newMonster = await Monster.bulkCreate(monsters)
         return newMonster
@@ -56,9 +56,7 @@ module.exports = {
     },
 
     assignMonstersToPreBattle: async (monsterIds, preBattleId) => {
-        console.log(monsterIds)
         const updatedMonsters = await Monster.update({ preBattleId }, { where: { id: monsterIds }, returning: true })
-        console.log(updatedMonsters)
         return updatedMonsters
     },
 

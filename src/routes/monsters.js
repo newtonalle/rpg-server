@@ -15,7 +15,7 @@ const {
 module.exports = {
     createMonstersForBattle: async (req, res) => {
         const monsters = []
-        const player = await findPlayerById(req.tokenPayload.id)
+        const player = await findPlayerById(req.tokenPayload.playerId)
         for (let loop = 0; loop < 3; loop++) {
             let monster = {
                 name: DEFAULT_MONSTER_NAMES[Math.floor(Math.random() * DEFAULT_MONSTER_NAMES.length)],
@@ -36,7 +36,9 @@ module.exports = {
 
                 currentMana: 0,
 
-                experience: 50 * player.level
+                experience: 50 * player.level,
+
+                gold: (5 * Math.round((Math.random() + 1) * DEFAULT_MONSTER_ATTRIBUTE_VARIETY)) * player.level
             }
 
             monster.currentHealth = monster.maxHealth
